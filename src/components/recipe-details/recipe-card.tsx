@@ -4,6 +4,7 @@ import { RecipeImage } from "./recipe-image";
 import { RecipeHeader } from "./recipe-header";
 import { RecipeCreator } from "./recipe-creator-section";
 import { RecipeDetails } from "./recipe-component";
+import { AddToPlanButton } from "@/components/meal-plan/add-to-plan-button";
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -23,6 +24,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => (
             <p className="text-trinidad-100 mb-6">
               {recipe.recipe_description}
             </p>
+            <AddToPlanButton recipe={recipe} />
           </div>
           <RecipeCreator creatorName={recipe.creator_name} />
         </div>

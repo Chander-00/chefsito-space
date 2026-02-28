@@ -18,6 +18,7 @@ const IngredientSearch = ({
   const [ingredientName, setIngredientName] = useState<string>("");
   const [ingredientQuantity, setIngredientQuantity] = useState<number>(0);
   const [ingredientUnit, setIngredientUnit] = useState<string>("g");
+  const [ingredientWeight, setIngredientWeight] = useState<number>(5);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const fetchSuggestions = async (input: string) => {
@@ -48,13 +49,14 @@ const IngredientSearch = ({
         name: ingredientName.trim(),
         quantity: ingredientQuantity,
         unit: ingredientUnit,
-        weight: 1,
+        weight: ingredientWeight,
       };
       onIngredientAdd(newIngredient);
 
       setIngredientName("");
       setIngredientQuantity(0);
       setIngredientUnit("kg");
+      setIngredientWeight(5);
       setSuggestions([]);
     }
   };
@@ -132,6 +134,17 @@ const IngredientSearch = ({
         >
           <GenerateUnitsOptions />
         </select>
+        <div className="flex items-center gap-2 w-1/3">
+          <input
+            type="range"
+            min={1}
+            max={10}
+            value={ingredientWeight}
+            onChange={(e) => setIngredientWeight(Number(e.target.value))}
+            className="w-full accent-trinidad-500"
+          />
+          <span className="text-white text-sm min-w-[2ch] text-center">{ingredientWeight}</span>
+        </div>
         <button
           type="button"
           onClick={handleAddIngredient}

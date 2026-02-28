@@ -6,7 +6,8 @@
 export const publicRoutes = [
   '/',
   '/auth/new-verification',
-  '/recipes/details/*'
+  '/recipes/details/*',
+  '/recipes/search'
 ]
 
 

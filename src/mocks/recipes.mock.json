@@ -13,9 +13,9 @@
       "recipe_country": "USA",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg",
       "recipe_ingredients": [
-          {"name": "Flour", "unit": "g", "weight": 1, "quantity": 500},
-          {"name": "Sugar", "unit": "g", "weight": 1, "quantity": 1500},
-          {"name": "Pepino", "unit": "pz", "weight": 1, "quantity": 3}
+          {"name": "Flour", "unit": "g", "weight": 8, "quantity": 500},
+          {"name": "Sugar", "unit": "g", "weight": 9, "quantity": 1500},
+          {"name": "Pepino", "unit": "pz", "weight": 2, "quantity": 3}
       ]
   },
   {
@@ -53,9 +53,9 @@
       "recipe_country": "Canada",
       "recipe_image": "https://media.istockphoto.com/id/1369489882/es/foto/variedad-de-alimentos-veganos-de-prote%C3%ADnas-a-base-de-plantas.jpg?s=1024x1024&w=is&k=20&c=ZZ0V_-hNEwKC2kn1EXW3kwUNPE3TrMk8NhG8WEtVOnc=",
       "recipe_ingredients": [
-          {"name": "Milk", "unit": "ml", "weight": 1, "quantity": 500},
-          {"name": "Sugar", "unit": "g", "weight": 1, "quantity": 200},
-          {"name": "Vanilla Extract", "unit": "ml", "weight": 1, "quantity": 5}
+          {"name": "Milk", "unit": "ml", "weight": 9, "quantity": 500},
+          {"name": "Sugar", "unit": "g", "weight": 7, "quantity": 200},
+          {"name": "Vanilla Extract", "unit": "ml", "weight": 10, "quantity": 5}
       ]
   },
   {
@@ -72,9 +72,9 @@
       "recipe_country": "Italy",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2023/10/bowl-of-ice-cream-with-chocolate.jpg",
       "recipe_ingredients": [
-          {"name": "Spaghetti", "unit": "g", "weight": 1, "quantity": 200},
-          {"name": "Ground Beef", "unit": "g", "weight": 1, "quantity": 300},
-          {"name": "Tomato Sauce", "unit": "ml", "weight": 1, "quantity": 200}
+          {"name": "Spaghetti", "unit": "g", "weight": 10, "quantity": 200},
+          {"name": "Ground Beef", "unit": "g", "weight": 9, "quantity": 300},
+          {"name": "Tomato Sauce", "unit": "ml", "weight": 6, "quantity": 200}
       ]
   },
   {
@@ -91,9 +91,9 @@
       "recipe_country": "USA",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2023/09/peaches.jpg",
       "recipe_ingredients": [
-          {"name": "Lettuce", "unit": "g", "weight": 1, "quantity": 100},
-          {"name": "Croutons", "unit": "g", "weight": 1, "quantity": 50},
-          {"name": "Caesar Dressing", "unit": "ml", "weight": 1, "quantity": 30}
+          {"name": "Lettuce", "unit": "g", "weight": 10, "quantity": 100},
+          {"name": "Croutons", "unit": "g", "weight": 4, "quantity": 50},
+          {"name": "Caesar Dressing", "unit": "ml", "weight": 7, "quantity": 30}
       ]
   },
   {
@@ -110,9 +110,9 @@
       "recipe_country": "USA",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2023/08/crispy-spicy-chicken-wings.jpg",
       "recipe_ingredients": [
-          {"name": "Chicken Breast", "unit": "g", "weight": 1, "quantity": 200},
-          {"name": "Olive Oil", "unit": "ml", "weight": 1, "quantity": 20},
-          {"name": "Lemon Juice", "unit": "ml", "weight": 1, "quantity": 10}
+          {"name": "Chicken Breast", "unit": "g", "weight": 10, "quantity": 200},
+          {"name": "Olive Oil", "unit": "ml", "weight": 5, "quantity": 20},
+          {"name": "Lemon Juice", "unit": "ml", "weight": 3, "quantity": 10}
       ]
   },
   {
@@ -129,9 +129,9 @@
       "recipe_country": "Italy",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2023/06/ice-cream-cone-splash.jpg",
       "recipe_ingredients": [
-          {"name": "Pizza Dough", "unit": "g", "weight": 1, "quantity": 300},
-          {"name": "Tomato Sauce", "unit": "ml", "weight": 1, "quantity": 100},
-          {"name": "Mozzarella", "unit": "g", "weight": 1, "quantity": 150}
+          {"name": "Pizza Dough", "unit": "g", "weight": 10, "quantity": 300},
+          {"name": "Tomato Sauce", "unit": "ml", "weight": 7, "quantity": 100},
+          {"name": "Mozzarella", "unit": "g", "weight": 9, "quantity": 150}
       ]
   },
   {
@@ -148,9 +148,9 @@
       "recipe_country": "USA",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2024/01/best-burger-in-town.jpg",
       "recipe_ingredients": [
-          {"name": "Apples", "unit": "g", "weight": 1, "quantity": 500},
-          {"name": "Flour", "unit": "g", "weight": 1, "quantity": 200},
-          {"name": "Sugar", "unit": "g", "weight": 1, "quantity": 100}
+          {"name": "Apples", "unit": "g", "weight": 10, "quantity": 500},
+          {"name": "Flour", "unit": "g", "weight": 8, "quantity": 200},
+          {"name": "Sugar", "unit": "g", "weight": 5, "quantity": 100}
       ]
   },
   {
@@ -167,9 +167,9 @@
       "recipe_country": "UK",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2023/09/beef-cut-close-up.jpg",
       "recipe_ingredients": [
-          {"name": "Beef", "unit": "g", "weight": 1, "quantity": 400},
-          {"name": "Potatoes", "unit": "g", "weight": 1, "quantity": 300},
-          {"name": "Carrots", "unit": "g", "weight": 1, "quantity": 200}
+          {"name": "Beef", "unit": "g", "weight": 10, "quantity": 400},
+          {"name": "Potatoes", "unit": "g", "weight": 7, "quantity": 300},
+          {"name": "Carrots", "unit": "g", "weight": 5, "quantity": 200}
       ]
   },
   {
@@ -186,9 +186,9 @@
       "recipe_country": "Canada",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2023/05/freshly-prepared-beef-steak-with-vegetables.jpg",
       "recipe_ingredients": [
-          {"name": "Flour", "unit": "g", "weight": 1, "quantity": 200},
-          {"name": "Milk", "unit": "ml", "weight": 1, "quantity": 300},
-          {"name": "Eggs", "unit": "pcs", "weight": 1, "quantity": 2}
+          {"name": "Flour", "unit": "g", "weight": 9, "quantity": 200},
+          {"name": "Milk", "unit": "ml", "weight": 8, "quantity": 300},
+          {"name": "Eggs", "unit": "pcs", "weight": 10, "quantity": 2}
       ]
   },
   {
@@ -205,9 +205,9 @@
       "recipe_country": "India",
       "recipe_image": "https://www.foodiesfeed.com/wp-content/uploads/2023/12/pink-macarons.jpg",
       "recipe_ingredients": [
-          {"name": "Chicken", "unit": "g", "weight": 1, "quantity": 400},
-          {"name": "Curry Paste", "unit": "g", "weight": 1, "quantity": 100},
-          {"name": "Coconut Milk", "unit": "ml", "weight": 1, "quantity": 200}
+          {"name": "Chicken", "unit": "g", "weight": 10, "quantity": 400},
+          {"name": "Curry Paste", "unit": "g", "weight": 9, "quantity": 100},
+          {"name": "Coconut Milk", "unit": "ml", "weight": 7, "quantity": 200}
       ]
   }
 ]

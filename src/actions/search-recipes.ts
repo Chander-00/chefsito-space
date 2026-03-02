@@ -1,10 +1,12 @@
 'use server'
 
-import recipesData from '@/mocks/recipes.mock.json'
-import { Recipe } from '@/types/recipes'
 import { filterAndScoreRecipes } from '@/lib/utils/recipe-scoring'
+import { getRecipesForScoringFromDB } from '@/lib/data/recipes.queries'
 
-const recipes: Recipe[] = recipesData
+// To swap back to mock data, uncomment these and comment out the DB call:
+// import recipesData from '@/mocks/recipes.mock.json'
+// import { Recipe } from '@/types/recipes'
+// const recipes: Recipe[] = recipesData
 
 export type SearchResult = {
   recipe_id: string
@@ -20,6 +22,8 @@ export async function searchRecipesByIngredients(
   ingredientNames: string[]
 ): Promise<SearchResult[]> {
   if (ingredientNames.length === 0) return []
+
+  const recipes = await getRecipesForScoringFromDB()
 
   const recipesForScoring = recipes.map((recipe) => ({
     id: recipe.recipe_id,

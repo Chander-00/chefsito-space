@@ -1,7 +1,7 @@
 'use server';
 
 import { uploadImage } from "@/lib/cloudinary";
-import { createRecipe } from "@/lib/data/recipes.queries";
+import { createRecipe, searchIngredientsFromDB } from "@/lib/data/recipes.queries";
 import { prisma } from "@/lib/prisma";
 import { RecipeIngredient, RecipeInput, RecipeInstruction } from "@/types/recipes";
 import { CreateRecipeSchema } from "@/validations/recipe.schema";
@@ -10,37 +10,15 @@ export const getCountries = async () => {
   return await prisma.country.findMany();
 };
 
-
-// Mock data for demonstration
-const mockIngredients = ["banana", "beans", "apple", "orange", "carrot", "potato", "algo", "algo mas"];
+// To swap back to mock data, uncomment these and comment out the DB call:
+// const mockIngredients = ["banana", "beans", "apple", "orange", "carrot", "potato", "algo", "algo mas"];
 
 export async function getIngredients(searchTerm: string) {
   if (!searchTerm) return [];
-  
-  // Convert the search term to lower case for a case-insensitive comparison
-  const lowerCaseSearchTerm = searchTerm.toLowerCase();
-  
-  // Filter the mock data based on the search term
-  const matchingIngredients = mockIngredients.filter(ingredient => 
-    ingredient.toLowerCase().includes(lowerCaseSearchTerm)
-  );
+  return searchIngredientsFromDB(searchTerm)
 
-  return matchingIngredients;
-
-  // const ingredients = await prisma.ingredient.findMany({
-//   where: {
-//     name: {
-//       contains: searchTerm,
-//       mode: 'insensitive', // Búsqueda sin mayúsculas/minúsculas
-//     },
-//   },
-//   select: {
-//     name: true,
-//   },
-// });
-
-// return ingredients.map(ingredient => ingredient.name);
-
+  // Mock version:
+  // return mockIngredients.filter(i => i.toLowerCase().includes(searchTerm.toLowerCase()));
 }
 
 export async function createRecipeAction(prevState: any, formData: FormData) {

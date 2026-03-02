@@ -1,33 +1,32 @@
 'use server'
 
-import recipesData from '@/mocks/recipes.mock.json'
-import { Recipe, RecipePreview } from "@/types/recipes";
+import { RecipePreview } from "@/types/recipes";
+import { getRecipesPreviewFromDB, getRecipeBySlugFromDB } from "./recipes.queries";
 
-const recipes: Recipe[] = recipesData;
+// To swap back to mock data, uncomment these and comment out the DB calls:
+// import recipesData from '@/mocks/recipes.mock.json'
+// import { Recipe } from "@/types/recipes";
+// const recipes: Recipe[] = recipesData;
 
 export async function getRecipesPreview(query?: string, currentPage?: number): Promise<RecipePreview[]> {
-  const recipesPreview = recipes
-    .filter((recipe) => ilike(recipe.recipe_name, query))
-    .map<RecipePreview>((recipe) => {
-      return {
-        recipe_id: recipe.recipe_id,
-        recipe_name: recipe.recipe_name,
-        recipe_slug: recipe.recipe_slug,
-        recipe_country: recipe.recipe_country,
-        recipe_image: recipe.recipe_image,
-        creator_name: recipe.creator_name,
-      };
-    });
+  return getRecipesPreviewFromDB(query)
 
-  return recipesPreview;
-}
-
-function ilike(str: string, query?: string): boolean {
-  if (!query) return true; // If no query is provided, return all recipes
-  return str.toLowerCase().includes(query.toLowerCase());
+  // Mock version:
+  // return recipes
+  //   .filter((recipe) => !query || recipe.recipe_name.toLowerCase().includes(query.toLowerCase()))
+  //   .map((recipe) => ({
+  //     recipe_id: recipe.recipe_id,
+  //     recipe_name: recipe.recipe_name,
+  //     recipe_slug: recipe.recipe_slug,
+  //     recipe_country: recipe.recipe_country,
+  //     recipe_image: recipe.recipe_image,
+  //     creator_name: recipe.creator_name,
+  //   }));
 }
 
 export async function getRecipeBySlug(slug: string) {
-  const recipe = recipes.find((recipe) => recipe.recipe_slug === slug)
-  return recipe
+  return getRecipeBySlugFromDB(slug)
+
+  // Mock version:
+  // return recipes.find((recipe) => recipe.recipe_slug === slug)
 }

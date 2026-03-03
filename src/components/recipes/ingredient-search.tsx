@@ -45,8 +45,20 @@ const IngredientSearch = ({
 
   const handleAddIngredient = () => {
     if (ingredientName.trim() && ingredientQuantity > 0) {
+      // If the typed name exactly matches a suggestion (case-insensitive),
+      // use the suggestion's casing to avoid duplicates like "potato" vs "Potato"
+      let resolvedName = ingredientName.trim();
+      if (suggestions.length > 0) {
+        const exactMatch = suggestions.find(
+          (s) => s.toLowerCase() === resolvedName.toLowerCase()
+        );
+        if (exactMatch) {
+          resolvedName = exactMatch;
+        }
+      }
+
       const newIngredient: RecipeIngredient = {
-        name: ingredientName.trim(),
+        name: resolvedName,
         quantity: ingredientQuantity,
         unit: ingredientUnit,
         weight: ingredientWeight,

@@ -44,9 +44,15 @@ export function IngredientSelector({
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && inputValue.trim()) {
+    if (e.key === 'Enter') {
       e.preventDefault()
-      handleAdd(inputValue.trim())
+      // Only allow adding if the typed value matches a suggestion exactly
+      const match = suggestions.find(
+        (s) => s.toLowerCase() === inputValue.trim().toLowerCase()
+      )
+      if (match) {
+        handleAdd(match)
+      }
     }
   }
 

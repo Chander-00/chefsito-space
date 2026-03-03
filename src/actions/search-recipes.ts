@@ -46,3 +46,56 @@ export async function searchRecipesByIngredients(
     }]
   })
 }
+
+// --- Real DB implementation ---
+// import { prisma } from '@/lib/prisma'
+// import { filterAndScoreRecipes } from '@/lib/utils/recipe-scoring'
+//
+// export async function searchRecipesByIngredients(
+//   ingredientNames: string[]
+// ): Promise<SearchResult[]> {
+//   if (ingredientNames.length === 0) return []
+//
+//   const recipes = await prisma.recipe.findMany({
+//     where: { deletedAt: null },
+//     select: {
+//       id: true,
+//       title: true,
+//       slug: true,
+//       image: true,
+//       country: { select: { name: true } },
+//       user: { select: { name: true } },
+//       recipeIngredients: {
+//         select: {
+//           weight: true,
+//           ingredient: { select: { name: true } },
+//         },
+//       },
+//     },
+//   })
+//
+//   const recipesForScoring = recipes.map((recipe) => ({
+//     id: recipe.id,
+//     title: recipe.title,
+//     ingredients: recipe.recipeIngredients.map((ri) => ({
+//       name: ri.ingredient.name,
+//       weight: ri.weight,
+//     })),
+//   }))
+//
+//   const scoredRecipes = filterAndScoreRecipes(recipesForScoring, ingredientNames)
+//
+//   return scoredRecipes.flatMap((scored) => {
+//     const original = recipes.find((r) => r.id === scored.id)
+//     if (!original) return []
+//     return [{
+//       recipe_id: original.id,
+//       recipe_name: original.title,
+//       recipe_slug: original.slug,
+//       recipe_image: original.image,
+//       recipe_country: original.country.name,
+//       creator_name: original.user.name ?? 'Unknown',
+//       score: Math.round(scored.score * 100),
+//     }]
+//   })
+// }

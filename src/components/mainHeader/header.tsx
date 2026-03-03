@@ -90,7 +90,7 @@ const NAV_ITEMS: NavItemType[] = [
     content: "Surprice Meal",
   },
   {
-    href: "#TODO",
+    href: "/recipes/search",
     content: "Advanced Search",
   },
 ];

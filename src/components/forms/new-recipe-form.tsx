@@ -16,9 +16,13 @@ import ImagePicker from "../recipes/image-picker";
 
 export default function NewRecipeForm() {
   const formRef = useRef<HTMLFormElement>(null);
-  const [formState, formAction] = useFormState(createRecipeAction, {});
+  const [formState, formAction] = useFormState(createRecipeAction, {
+    errors: {},
+    message: "",
+  });
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
   const [instructions, setInstructions] = useState<RecipeInstruction[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleIngredientAdd = (ingredient: RecipeIngredient) => {
     setIngredients((prev) => [...prev, ingredient]);
@@ -50,8 +54,28 @@ export default function NewRecipeForm() {
     });
   };
 
+  const handleReorderInstructions = (fromIndex: number, toIndex: number) => {
+    setInstructions((prev) => {
+      const updated = [...prev];
+      const [moved] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, moved);
+      return updated.map((inst, i) => ({ ...inst, step_number: i + 1 }));
+    });
+  };
+
+  const handleEditInstruction = (index: number, newText: string) => {
+    setInstructions((prev) =>
+      prev.map((inst, i) =>
+        i === index ? { ...inst, instruction: newText } : inst
+      )
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
 
     const formData = new FormData();
 
@@ -79,7 +103,11 @@ export default function NewRecipeForm() {
       }
     }
 
-    formAction(formData);
+    try {
+      await formAction(formData);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -130,6 +158,8 @@ export default function NewRecipeForm() {
       <DisplayInstructions
         instructions={instructions}
         handleRemoveInstruction={handleRemoveInstruction}
+        handleReorderInstructions={handleReorderInstructions}
+        handleEditInstruction={handleEditInstruction}
       />
       <div className="grid grid-cols-1">
         <ImagePicker
@@ -138,7 +168,7 @@ export default function NewRecipeForm() {
           errors={formState.errors?.imageInput}
         />
       </div>
-      <FormSubmitButton text="Create Recipe" loadingText="Creating Recipe..." />
+      <FormSubmitButton text="Create Recipe" loadingText="Creating Recipe..." disabled={isSubmitting} />
     </form>
   );
 }

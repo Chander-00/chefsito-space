@@ -1,5 +1,6 @@
 'use server';
 
+import { redirect } from "next/navigation";
 import { uploadImage } from "@/lib/cloudinary";
 import { createRecipe } from "@/lib/data/recipes.queries";
 import { prisma } from "@/lib/prisma";
@@ -27,19 +28,21 @@ export async function getIngredients(searchTerm: string) {
 
   return matchingIngredients;
 
+  // --- Real DB implementation ---
   // const ingredients = await prisma.ingredient.findMany({
-//   where: {
-//     name: {
-//       contains: searchTerm,
-//       mode: 'insensitive', // Búsqueda sin mayúsculas/minúsculas
-//     },
-//   },
-//   select: {
-//     name: true,
-//   },
-// });
-
-// return ingredients.map(ingredient => ingredient.name);
+  //   where: {
+  //     name: {
+  //       contains: searchTerm,
+  //       mode: 'insensitive',
+  //     },
+  //   },
+  //   select: {
+  //     name: true,
+  //   },
+  //   take: 10,
+  // });
+  //
+  // return ingredients.map(ingredient => ingredient.name);
 
 }
 
@@ -71,7 +74,7 @@ export async function createRecipeAction(prevState: any, formData: FormData) {
     };
   }
   const { data } = validatedFields
-  await createRecipe(data as RecipeInput)
+  const slug = await createRecipe(data as RecipeInput)
 
-  return {};
+  redirect(`/recipes/details/${slug}`)
 }

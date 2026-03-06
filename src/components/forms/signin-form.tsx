@@ -1,24 +1,26 @@
 "use client";
-import { useFormState } from "react-dom";
 
-import TextInput from "../form-components/text-input";
 import OauthButtons from "../oauth-btns";
-import PasswordInput from "../form-components/password-input";
 import Divider from "../form-components/divider";
-import FormSubmitButton from "../btns/form-submit";
-import CheckboxInput from "../form-components/checkbox-input";
-import FormHeader from "../form-components/header";
-import { authenticate } from "@/actions/auth";
 import ErrorMessage from "../form-components/error-message";
 import { useSearchParams } from "next/navigation";
-import { SignInFormState } from "@/types/auth/formStates";
-import SuccessMessage from "../form-components/success-message";
-import Link from "next/link";
 
-const initialState: SignInFormState = {
-  message: null,
-  error: null,
-};
+// --- Credential-based sign-in (commented out for OAuth-only) ---
+// import { useActionState } from "react";
+// import TextInput from "../form-components/text-input";
+// import PasswordInput from "../form-components/password-input";
+// import FormSubmitButton from "../btns/form-submit";
+// import CheckboxInput from "../form-components/checkbox-input";
+// import FormHeader from "../form-components/header";
+// import { authenticate } from "@/actions/auth";
+// import { SignInFormState } from "@/types/auth/formStates";
+// import SuccessMessage from "../form-components/success-message";
+// import Link from "next/link";
+//
+// const initialState: SignInFormState = {
+//   message: null,
+//   error: null,
+// };
 
 export default function SignInForm() {
   const searchParams = useSearchParams();
@@ -26,51 +28,42 @@ export default function SignInForm() {
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with different provider"
       : "";
-  const [state, formAction] = useFormState(authenticate, initialState);
+
+  // --- Credential-based sign-in (commented out for OAuth-only) ---
+  // const [state, formAction] = useActionState(authenticate, initialState);
 
   return (
-    <form action={formAction}>
-      <FormHeader
-        cta="Register here"
-        text="Don't have an account"
-        title="Sign in"
-      />
-      {/* Email */}
-      <TextInput id="email" type="email" name="email" label="Email" />
-      <PasswordInput
-        id="password"
-        name="password"
-        label="Password"
-        errors={[]}
-      />
-
-      {/* <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-        <CheckboxInput
-          id="remember-me"
-          name="remember-me"
-          label="Remember me"
-        />
-        <div>
-          <Link
-            href="/auth/reset"
-            className="text-sm font-semibold text-trinidad-500 hover:underline"
-          >
-            Forgot Password?
-          </Link>
-        </div>
-      </div> */}
-
-      <div>
-        <ErrorMessage message={state.error || urlError} />
-        <SuccessMessage message={state.message} />
-        <FormSubmitButton text="Sign In" loadingText="Signing In" />
-
-        {/* {state.error ||
-            (urlError && <ErrorMessage message={state.error || urlError} />)} */}
+    <div>
+      <div className="mb-10">
+        <h3 className="text-3xl font-extrabold text-trinidad-50">Sign in</h3>
+        <p className="mt-4 text-sm text-trinidad-50">
+          Choose a provider to continue
+        </p>
       </div>
 
-      <Divider />
+      <ErrorMessage message={urlError} />
+
+      {/* --- Credential-based sign-in (commented out for OAuth-only) ---
+      <form action={formAction}>
+        <TextInput id="email" type="email" name="email" label="Email" />
+        <PasswordInput
+          id="password"
+          name="password"
+          label="Password"
+          errors={[]}
+        />
+
+        <div>
+          <ErrorMessage message={state.error || urlError} />
+          <SuccessMessage message={state.message} />
+          <FormSubmitButton text="Sign In" loadingText="Signing In" />
+        </div>
+
+        <Divider />
+      </form>
+      */}
+
       <OauthButtons />
-    </form>
+    </div>
   );
 }

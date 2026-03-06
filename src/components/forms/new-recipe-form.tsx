@@ -44,10 +44,9 @@ export default function NewRecipeForm() {
     setInstructions((prev) => {
       const updatedInstructions = prev.filter((_, i) => i !== index);
 
-      // Reassign step numbers
       return updatedInstructions.map((instruction, i) => ({
         ...instruction,
-        step_number: i + 1, // Recalculate step number based on new index
+        step_number: i + 1,
       }));
     });
   };

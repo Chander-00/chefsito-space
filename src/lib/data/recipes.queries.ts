@@ -5,8 +5,6 @@ import { uploadImage } from "@/lib/cloudinary";
 import slugify from "slugify";
 import { generateRandomString } from "../utils/strings";
 
-// ─── Helpers ────────────────────────────────────────────────
-
 type PrismaRecipeWithRelations = {
   id: string
   title: string
@@ -52,8 +50,6 @@ const recipeInclude = {
     include: { ingredient: true },
   },
 } as const
-
-// ─── Read queries ───────────────────────────────────────────
 
 export async function getRecipesPreviewFromDB(query?: string): Promise<RecipePreview[]> {
   const recipes = await prisma.recipe.findMany({
@@ -126,8 +122,6 @@ export async function getRandomRecipeSlugFromDB(): Promise<string | null> {
   })
   return recipe?.slug ?? null
 }
-
-// ─── Admin queries ──────────────────────────────────────────
 
 export async function getAdminStats() {
   const [totalRecipes, totalUsers, totalFavorites] = await Promise.all([
@@ -219,8 +213,6 @@ export async function restoreRecipe(id: string) {
   })
 }
 
-// ─── Write queries ──────────────────────────────────────────
-
 export async function updateRecipe(
   id: string,
   data: {
@@ -305,7 +297,6 @@ export const createRecipe = async (preRecipe: RecipeInput) => {
 
   await prisma.$transaction(async (tx) => {
     
-    // Country logic 
     const countryRecord = await tx.country.findUnique({
       where: {
         name: preRecipe.country
@@ -316,7 +307,6 @@ export const createRecipe = async (preRecipe: RecipeInput) => {
       throw new Error("Something went wrong retrieving the country")
     }
 
-    // Recipe creation
     const recipe = await tx.recipe.create({
       data: {
         title: preRecipe.name,
@@ -329,12 +319,10 @@ export const createRecipe = async (preRecipe: RecipeInput) => {
       }
     })
 
-    // Ingredients logic
     await Promise.all(
       preRecipe.ingredients.map(async(ing) => {
         const trimmedName = ing.name.trim()
 
-        // Case-insensitive exact match to avoid duplicates like "Potato" vs "potato"
         let ingredientRecord = await tx.ingredient.findFirst({
           where: { name: { equals: trimmedName, mode: 'insensitive' } },
           select: { id: true },

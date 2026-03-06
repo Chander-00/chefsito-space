@@ -53,7 +53,7 @@ export function filterAndScoreRecipes(
 
   for (const recipe of recipes) {
     const { score, excluded } = scoreRecipe(recipe.ingredients, userIngredients)
-    if (!excluded) {
+    if (!excluded && score > 0) {
       scored.push({ ...recipe, score })
     }
   }

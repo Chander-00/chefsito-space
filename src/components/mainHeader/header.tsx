@@ -1,7 +1,8 @@
-import { NavItemType } from "@/types/header";
 import Link from "next/link";
 import { NavItem } from "./navItems";
 import MainHeaderBackground from "./background";
+import AuthButtons from "./auth-buttons";
+import { SurpriseMealLink } from "./surprise-meal-link";
 
 export default function MainHeader() {
   return (
@@ -16,18 +17,7 @@ export default function MainHeader() {
               </span>
             </Link>
             <div className="flex items-center lg:order-2">
-              <Link
-                href="/auth/signin"
-                className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-              >
-                Sign up
-              </Link>
+              <AuthButtons />
               <button
                 data-collapse-toggle="mobile-menu-2"
                 type="button"
@@ -70,6 +60,7 @@ export default function MainHeader() {
                 {NAV_ITEMS.map(({ href, content }, index) => (
                   <NavItem key={index} href={href} content={content}></NavItem>
                 ))}
+                <SurpriseMealLink />
               </ul>
             </div>
           </div>
@@ -79,16 +70,7 @@ export default function MainHeader() {
   );
 }
 
-const NAV_ITEMS: NavItemType[] = [
-  {
-    // href: "/recipes/#most-Liked",
-    href: "#TODO",
-    content: "Most Liked",
-  },
-  {
-    href: "#TODO",
-    content: "Surprice Meal",
-  },
+const NAV_ITEMS = [
   {
     href: "/recipes/search",
     content: "Advanced Search",

@@ -3,10 +3,8 @@
 import { useState, useCallback } from 'react'
 import { IngredientSelector } from './ingredient-selector'
 import { SearchResultItem } from './search-result-item'
-import {
-  searchRecipesByIngredients,
-  SearchResult,
-} from '@/actions/search-recipes'
+import { searchRecipesByIngredients } from '@/actions/search-recipes'
+import type { SearchResult } from '@/lib/data/fetch-recipes'
 
 export function SearchPageClient() {
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])

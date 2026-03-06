@@ -1,7 +1,7 @@
 "use client";
 import { getIngredients } from "@/actions/recipes";
 import { RecipeIngredient } from "@/types/recipes";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import GenerateUnitsOptions from "./gen-options";
 
 interface IngredientSearchProps {
@@ -20,24 +20,26 @@ const IngredientSearch = ({
   const [ingredientUnit, setIngredientUnit] = useState<string>("g");
   const [ingredientWeight, setIngredientWeight] = useState<number>(5);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const fetchSuggestions = async (input: string) => {
+  const fetchSuggestions = useCallback(async (input: string) => {
     try {
       const existingIngredients = await getIngredients(input);
       setSuggestions(existingIngredients);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
     }
-  };
+  }, []);
 
   const handleIngredientNameChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
     setIngredientName(value);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
     if (value.trim()) {
-      fetchSuggestions(value);
+      debounceTimer.current = setTimeout(() => fetchSuggestions(value), 300);
     } else {
       setSuggestions([]);
     }
@@ -146,17 +148,17 @@ const IngredientSearch = ({
         >
           <GenerateUnitsOptions />
         </select>
-        <div className="flex items-center gap-2 w-1/3">
-          <input
-            type="range"
-            min={1}
-            max={10}
-            value={ingredientWeight}
-            onChange={(e) => setIngredientWeight(Number(e.target.value))}
-            className="w-full accent-trinidad-500"
-          />
-          <span className="text-white text-sm min-w-[2ch] text-center">{ingredientWeight}</span>
-        </div>
+        <select
+          value={ingredientWeight}
+          name="ingredient_weight"
+          onChange={(e) => setIngredientWeight(Number(e.target.value))}
+          className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-white focus:border-trinidad-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:focus:border-trinidad-600"
+        >
+          <option value={2} className="bg-gray-900">Optional — nice to have</option>
+          <option value={5} className="bg-gray-900">Important — adds to the dish</option>
+          <option value={8} className="bg-gray-900">Key — defines the dish</option>
+          <option value={10} className="bg-gray-900">Essential — can&apos;t make it without</option>
+        </select>
         <button
           type="button"
           onClick={handleAddIngredient}

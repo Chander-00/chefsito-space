@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { getIngredients } from '@/actions/recipes'
 import { IngredientChip } from './ingredient-chip'
 
@@ -17,21 +17,23 @@ export function IngredientSelector({
 }: IngredientSelectorProps) {
   const [inputValue, setInputValue] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const fetchSuggestions = async (input: string) => {
+  const fetchSuggestions = useCallback(async (input: string) => {
     try {
       const results = await getIngredients(input)
       setSuggestions(results.filter((r) => !selectedIngredients.includes(r)))
     } catch (error) {
       console.error('Error fetching suggestions:', error)
     }
-  }
+  }, [selectedIngredients])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setInputValue(value)
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
     if (value.trim()) {
-      fetchSuggestions(value)
+      debounceTimer.current = setTimeout(() => fetchSuggestions(value), 300)
     } else {
       setSuggestions([])
     }

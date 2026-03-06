@@ -1,49 +1,20 @@
 'use server';
 
 import { redirect } from "next/navigation";
-import { uploadImage } from "@/lib/cloudinary";
-import { createRecipe } from "@/lib/data/recipes.queries";
-import { prisma } from "@/lib/prisma";
+import {
+  createRecipe,
+  getCountries as _getCountries,
+  getIngredients as _getIngredients,
+} from "@/lib/data/recipes.queries";
 import { RecipeIngredient, RecipeInput, RecipeInstruction } from "@/types/recipes";
 import { CreateRecipeSchema } from "@/validations/recipe.schema";
 
-export const getCountries = async () => {
-  return await prisma.country.findMany();
-};
-
-
-// Mock data for demonstration
-const mockIngredients = ["banana", "beans", "apple", "orange", "carrot", "potato", "algo", "algo mas"];
+export async function getCountries() {
+  return _getCountries();
+}
 
 export async function getIngredients(searchTerm: string) {
-  if (!searchTerm) return [];
-  
-  // Convert the search term to lower case for a case-insensitive comparison
-  const lowerCaseSearchTerm = searchTerm.toLowerCase();
-  
-  // Filter the mock data based on the search term
-  const matchingIngredients = mockIngredients.filter(ingredient => 
-    ingredient.toLowerCase().includes(lowerCaseSearchTerm)
-  );
-
-  return matchingIngredients;
-
-  // --- Real DB implementation ---
-  // const ingredients = await prisma.ingredient.findMany({
-  //   where: {
-  //     name: {
-  //       contains: searchTerm,
-  //       mode: 'insensitive',
-  //     },
-  //   },
-  //   select: {
-  //     name: true,
-  //   },
-  //   take: 10,
-  // });
-  //
-  // return ingredients.map(ingredient => ingredient.name);
-
+  return _getIngredients(searchTerm);
 }
 
 export async function createRecipeAction(prevState: any, formData: FormData) {
@@ -64,8 +35,6 @@ export async function createRecipeAction(prevState: any, formData: FormData) {
   }
   
   const validatedFields = CreateRecipeSchema.safeParse(preRecipe)
-  // console.log(validatedFields.data?.imageInput)
-  // await uploadImage(validatedFields.data?.imageInput as unknown as File)
 
   if (!validatedFields.success) {
     return {

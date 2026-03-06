@@ -5,7 +5,6 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      {JSON.stringify(session)}
       <form
         action={async () => {
           "use server";

@@ -2,18 +2,15 @@ import { RecipeCard } from "@/components/recipe-details/recipe-card";
 import { getRecipeBySlug } from "@/lib/data/fetch-recipes";
 import { notFound } from "next/navigation";
 
-interface RecipeDetailsPageParams {
-  recipeSlug: string;
-}
-
 interface RecipeDetailsPageProps {
-  params: RecipeDetailsPageParams;
+  params: Promise<{ recipeSlug: string }>;
 }
 
 export default async function RecipeDetailsPage({
   params,
 }: RecipeDetailsPageProps) {
-  const recipe = await getRecipeBySlug(params.recipeSlug);
+  const { recipeSlug } = await params;
+  const recipe = await getRecipeBySlug(recipeSlug);
   if (!recipe) {
     notFound();
   }

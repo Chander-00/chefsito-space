@@ -2,7 +2,7 @@
 
 import { SignUpFormState } from "@/types/auth/formStates";
 import { signUpAction } from "@/actions/auth";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import FormSubmitButton from "@/components/btns/form-submit";
 import TextInput from "@/components/form-components/text-input";
 import PasswordInput from "@/components/form-components/password-input";
@@ -16,7 +16,7 @@ const initialState: SignUpFormState = {
 };
 
 export default function SignUpForm() {
-  const [formState, formAction] = useFormState(signUpAction, initialState);
+  const [formState, formAction] = useActionState(signUpAction, initialState);
 
   return (
     <form action={formAction} className="w-3/4 mx-auto md:w-2/5">

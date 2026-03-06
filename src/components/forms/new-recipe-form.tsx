@@ -1,6 +1,5 @@
 "use client";
-import { useFormState } from "react-dom";
-import { useRef, useState } from "react";
+import { startTransition, useActionState, useRef, useState } from "react";
 
 import { RecipeInstruction, RecipeIngredient } from "@/types/recipes";
 import { createRecipeAction } from "@/actions/recipes";
@@ -16,13 +15,12 @@ import ImagePicker from "../recipes/image-picker";
 
 export default function NewRecipeForm() {
   const formRef = useRef<HTMLFormElement>(null);
-  const [formState, formAction] = useFormState(createRecipeAction, {
+  const [formState, formAction, isPending] = useActionState(createRecipeAction, {
     errors: {},
     message: "",
   });
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
   const [instructions, setInstructions] = useState<RecipeInstruction[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleIngredientAdd = (ingredient: RecipeIngredient) => {
     setIngredients((prev) => [...prev, ingredient]);
@@ -73,9 +71,7 @@ export default function NewRecipeForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isSubmitting) return;
-
-    setIsSubmitting(true);
+    if (isPending) return;
 
     const formData = new FormData();
 
@@ -103,11 +99,7 @@ export default function NewRecipeForm() {
       }
     }
 
-    try {
-      await formAction(formData);
-    } finally {
-      setIsSubmitting(false);
-    }
+    startTransition(() => formAction(formData));
   };
 
   return (
@@ -168,7 +160,7 @@ export default function NewRecipeForm() {
           errors={formState.errors?.imageInput}
         />
       </div>
-      <FormSubmitButton text="Create Recipe" loadingText="Creating Recipe..." disabled={isSubmitting} />
+      <FormSubmitButton text="Create Recipe" loadingText="Creating Recipe..." disabled={isPending} />
     </form>
   );
 }

@@ -23,9 +23,19 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
+      const adminEmails = (process.env.ADMIN_EMAILS ?? '')
+        .split(',')
+        .map(e => e.trim().toLowerCase())
+        .filter(Boolean)
+
+      const isAdmin = adminEmails.includes(user.email?.toLowerCase() ?? '')
+
       await prisma.user.update({
         where: { id: user.id },
-        data: { emailVerified: new Date() }
+        data: {
+          emailVerified: new Date(),
+          ...(isAdmin && { role: 'ADMIN' }),
+        }
       })
     }
   },

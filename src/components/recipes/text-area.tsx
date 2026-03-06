@@ -4,6 +4,7 @@ interface TextAreaInputProps {
   label: string;
   rows?: number;
   errors?: string[];
+  defaultValue?: string;
 }
 
 const TextAreaInput: React.FC<TextAreaInputProps> = ({
@@ -12,12 +13,14 @@ const TextAreaInput: React.FC<TextAreaInputProps> = ({
   label,
   rows = 4,
   errors,
+  defaultValue,
 }) => (
   <div className="relative z-0 w-full mb-5 group">
     <textarea
       name={name}
       id={id}
       rows={rows}
+      defaultValue={defaultValue}
       className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-trinidad-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-trinidad-600"
       placeholder=" "
       required

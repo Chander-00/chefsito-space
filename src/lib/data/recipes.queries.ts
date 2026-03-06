@@ -221,6 +221,69 @@ export async function restoreRecipe(id: string) {
 
 // ─── Write queries ──────────────────────────────────────────
 
+export async function updateRecipe(
+  id: string,
+  data: {
+    title: string
+    description: string
+    country: string
+    ingredients: RecipeIngredientType[]
+    instructions: Recipe['recipe_instructions']
+    image?: string
+  }
+) {
+  await prisma.$transaction(async (tx) => {
+    const countryRecord = await tx.country.findUnique({
+      where: { name: data.country },
+    })
+
+    if (!countryRecord) {
+      throw new Error('Something went wrong retrieving the country')
+    }
+
+    await tx.recipe.update({
+      where: { id },
+      data: {
+        title: data.title,
+        description: data.description,
+        countryId: countryRecord.id,
+        instructions: data.instructions,
+        ...(data.image ? { image: data.image } : {}),
+      },
+    })
+
+    await tx.recipeIngredient.deleteMany({ where: { recipeId: id } })
+
+    await Promise.all(
+      data.ingredients.map(async (ing) => {
+        const trimmedName = ing.name.trim()
+
+        let ingredientRecord = await tx.ingredient.findFirst({
+          where: { name: { equals: trimmedName, mode: 'insensitive' } },
+          select: { id: true },
+        })
+
+        if (!ingredientRecord) {
+          ingredientRecord = await tx.ingredient.create({
+            data: { name: trimmedName },
+            select: { id: true },
+          })
+        }
+
+        return tx.recipeIngredient.create({
+          data: {
+            recipeId: id,
+            ingredientId: ingredientRecord.id,
+            weight: ing.weight || 1,
+            quantity: ing.quantity,
+            unit: ing.unit,
+          },
+        })
+      })
+    )
+  })
+}
+
 export const createRecipe = async (preRecipe: RecipeInput) => {
   const session = await auth()
   if (!session?.user.id) {

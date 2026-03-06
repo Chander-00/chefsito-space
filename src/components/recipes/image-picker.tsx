@@ -7,11 +7,12 @@ interface ImagePickerProps {
   label: string;
   name: string;
   errors?: string[];
+  currentImage?: string;
 }
 
-export default function ImagePicker({ label, name, errors }: ImagePickerProps) {
+export default function ImagePicker({ label, name, errors, currentImage }: ImagePickerProps) {
   const imageInput = useRef<HTMLInputElement | null>(null);
-  const [pickedImage, setPickedImage] = useState<string | null>(null);
+  const [pickedImage, setPickedImage] = useState<string | null>(currentImage ?? null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -65,7 +66,7 @@ export default function ImagePicker({ label, name, errors }: ImagePickerProps) {
             name={name}
             ref={imageInput}
             onChange={handleImageChange}
-            required
+            required={!currentImage}
           />
           <button
             className="border-2 border-trinidad-500 py-2 px-4 md:mb-0 mb-4 rounded-md cursor-pointer bg-transparent text-trinidad-500 hover:bg-trinidad-500 hover:text-white focus:bg-trinidad-500 focus:text-white transition-colors duration-300"

@@ -40,13 +40,20 @@ export const {
     }
   },
   callbacks: {
-    async signIn({ account }) {
-      // OAuth providers don't require email verification
-      if (account?.provider !== 'credentials') return true
+    async signIn({ user, account }) {
+      if (account?.provider === 'credentials') return true
 
-      // --- Credential-based auth (commented out for OAuth-only) ---
-      // const existingUser = await getUserById(user.id as string)
-      // if (!existingUser?.emailVerified) return false
+      const adminEmails = (process.env.ADMIN_EMAILS ?? '')
+        .split(',')
+        .map(e => e.trim().toLowerCase())
+        .filter(Boolean)
+
+      if (user.id && adminEmails.includes(user.email?.toLowerCase() ?? '')) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { role: 'ADMIN' },
+        })
+      }
 
       return true
     },

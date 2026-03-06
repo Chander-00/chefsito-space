@@ -3,6 +3,7 @@ import NextAuth from "next-auth"
 import authConfig from "@/auth.config"
 import {
   DEFAULT_LOGIN_REDIRECT,
+  adminPrefix,
   apiAuthPrefix,
   authRoutes,
   publicRoutes
@@ -21,11 +22,21 @@ export default auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
 
+  console.log(`[page-visit] ${nextUrl.pathname} | user=${req.auth?.user?.email ?? 'anonymous'}`)
+
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix)
   const isPublic = isPublicRoute(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname)
 
   if (isApiAuthRoute) {
+    return
+  }
+
+  const isAdminRoute = nextUrl.pathname.startsWith(adminPrefix)
+  if (isAdminRoute) {
+    if (!isLoggedIn) {
+      return Response.redirect(new URL("/auth/signin", nextUrl))
+    }
     return
   }
 

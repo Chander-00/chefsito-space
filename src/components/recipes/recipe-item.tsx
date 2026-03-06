@@ -4,7 +4,13 @@ import Link from "next/link";
 import { FavButton } from "./add-to-fav-button";
 import { AddToPlanCardButton } from "@/components/meal-plan/add-to-plan-card-button";
 
-export function RecipeItem({ recipe }: { recipe: RecipePreview }) {
+interface RecipeItemProps {
+  recipe: RecipePreview;
+  isFavorited?: boolean;
+  isSignedIn?: boolean;
+}
+
+export function RecipeItem({ recipe, isFavorited = false, isSignedIn = false }: RecipeItemProps) {
   return (
     <li className="break-inside-avoid">
       <Link
@@ -27,7 +33,7 @@ export function RecipeItem({ recipe }: { recipe: RecipePreview }) {
             <p className="mt-1 text-sm text-gray-200">{recipe.creator_name}</p>
           </div>
 
-          <FavButton />
+          <FavButton recipeId={recipe.recipe_id} initialFavorited={isFavorited} isSignedIn={isSignedIn} />
           <AddToPlanCardButton recipeId={recipe.recipe_id} />
         </div>
       </Link>

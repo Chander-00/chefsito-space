@@ -8,7 +8,7 @@ const adapter = new PrismaPg({ connectionString })
  
 export const prisma = globalForPrisma.prisma || new PrismaClient({
   adapter,
-  log: ['query', 'info', 'warn', 'error'], // Enable Prisma logs
+  log: ['warn', 'error'],
 })
  
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma

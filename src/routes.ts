@@ -6,7 +6,8 @@
 export const publicRoutes = [
   '/',
   '/recipes/details/*',
-  '/recipes/search'
+  '/recipes/search',
+  '/users/*',
 ]
 
 
@@ -39,3 +40,5 @@ export const apiAuthPrefix = "/api/auth"
  * @type {string}
  */
 export const DEFAULT_LOGIN_REDIRECT = "/"
+
+export const adminPrefix = "/admin"

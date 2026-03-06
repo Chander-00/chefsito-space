@@ -1,0 +1,11 @@
+services:
+  chefsito-space:
+    build: .
+    env_file: .env
+    networks:
+      - web
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true

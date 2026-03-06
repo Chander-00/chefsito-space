@@ -4,6 +4,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Anyone Can Cook",
+  description: "Discover recipes from around the world. Search, cook, and share your favorites.",
 };
 
 export default async function Home({

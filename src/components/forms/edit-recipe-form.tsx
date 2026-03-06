@@ -1,8 +1,8 @@
 "use client";
 import { startTransition, useActionState, useRef, useState } from "react";
 
-import { RecipeInstruction, RecipeIngredient } from "@/types/recipes";
-import { createRecipeAction } from "@/actions/recipes";
+import { Recipe, RecipeInstruction, RecipeIngredient } from "@/types/recipes";
+import { updateRecipeAction } from "@/actions/admin";
 import FormSubmitButton from "@/components/btns/form-submit";
 import TextInput from "@/components/form-components/text-input";
 import TextAreaInput from "@/components/recipes/text-area";
@@ -13,14 +13,18 @@ import InstructionsInput from "../recipes/instructions-input";
 import DisplayInstructions from "../recipes/instructions-display";
 import ImagePicker from "../recipes/image-picker";
 
-export default function NewRecipeForm() {
+export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [formState, formAction, isPending] = useActionState(createRecipeAction, {
+  const [formState, formAction, isPending] = useActionState(updateRecipeAction, {
     errors: {},
     message: "",
   });
-  const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
-  const [instructions, setInstructions] = useState<RecipeInstruction[]>([]);
+  const [ingredients, setIngredients] = useState<RecipeIngredient[]>(
+    recipe.recipe_ingredients
+  );
+  const [instructions, setInstructions] = useState<RecipeInstruction[]>(
+    recipe.recipe_instructions
+  );
 
   const handleIngredientAdd = (ingredient: RecipeIngredient) => {
     setIngredients((prev) => [...prev, ingredient]);
@@ -43,7 +47,6 @@ export default function NewRecipeForm() {
   const handleRemoveInstruction = (index: number) => {
     setInstructions((prev) => {
       const updatedInstructions = prev.filter((_, i) => i !== index);
-
       return updatedInstructions.map((instruction, i) => ({
         ...instruction,
         step_number: i + 1,
@@ -88,6 +91,7 @@ export default function NewRecipeForm() {
         "recipe_image"
       ) as HTMLInputElement;
 
+      formData.append("recipeId", recipe.recipe_id);
       formData.append("name", nameInput.value);
       formData.append("description", descriptionInput.value);
       formData.append("country", countryInput.value);
@@ -95,6 +99,7 @@ export default function NewRecipeForm() {
       formData.append("instructions", JSON.stringify(instructions));
       if (imageInput && imageInput.files && imageInput.files[0]) {
         formData.append("image", imageInput.files[0]);
+        formData.append("existingImageUrl", recipe.recipe_image);
       }
     }
 
@@ -103,20 +108,23 @@ export default function NewRecipeForm() {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="max-w-md mx-auto">
+      <input type="hidden" name="recipeId" value={recipe.recipe_id} />
       <div className="grid grid-cols-2 gap-3">
         <TextInput
           id="name"
           label="Recipe name"
           name="name"
           type="text"
+          defaultValue={recipe.recipe_name}
           errors={formState.errors?.name || []}
         />
         <SelectCountryInput
           id="country"
           label="Country"
           name="country"
+          defaultValue={recipe.recipe_country}
           errors={formState.errors?.country || []}
-        ></SelectCountryInput>
+        />
       </div>
       <div className="grid grid-cols-1">
         <TextAreaInput
@@ -124,6 +132,7 @@ export default function NewRecipeForm() {
           label="Description"
           name="description"
           rows={3}
+          defaultValue={recipe.recipe_description}
           errors={formState.errors?.description || []}
         />
       </div>
@@ -154,12 +163,13 @@ export default function NewRecipeForm() {
       />
       <div className="grid grid-cols-1">
         <ImagePicker
-          label="Add an image for the recipe"
+          label="Update recipe image"
           name="recipe_image"
+          currentImage={recipe.recipe_image}
           errors={formState.errors?.imageInput}
         />
       </div>
-      <FormSubmitButton text="Create Recipe" loadingText="Creating Recipe..." disabled={isPending} />
+      <FormSubmitButton text="Update Recipe" loadingText="Updating Recipe..." disabled={isPending} />
     </form>
   );
 }

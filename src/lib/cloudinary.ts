@@ -18,18 +18,43 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
-export async function uploadImage (image: File) {
-  const imageData = await image.arrayBuffer()
-  const mime = image.type
-  const encoding = 'base64'
-  const base64Data = Buffer.from(imageData).toString('base64')
-  const fileUri = 'data:' + mime + ';' + encoding + ',' + base64Data
-  const result = await cloudinary.uploader.upload(fileUri, {
+function toDataUri(image: File, buffer: Buffer) {
+  return 'data:' + image.type + ';base64,' + buffer.toString('base64')
+}
+
+export async function uploadImage(image: File) {
+  const buffer = Buffer.from(await image.arrayBuffer())
+  const result = await cloudinary.uploader.upload(toDataUri(image, buffer), {
     folder: 'chefsito-space-recipes',
     transformation: [
-      {quality: 60},
-      {fetch_format: "webp"},
+      { quality: 60 },
+      { fetch_format: "webp" },
     ]
   })
   return result.secure_url
+}
+
+export function extractPublicId(cloudinaryUrl: string): string | null {
+  const match = cloudinaryUrl.match(/\/upload\/(?:v\d+\/)?(chefsito-space-recipes\/.+?)(?:\.\w+)?$/)
+  return match?.[1] ?? null
+}
+
+export async function replaceImage(image: File, existingUrl: string) {
+  const publicId = extractPublicId(existingUrl)
+  const buffer = Buffer.from(await image.arrayBuffer())
+
+  if (publicId) {
+    const result = await cloudinary.uploader.upload(toDataUri(image, buffer), {
+      public_id: publicId,
+      overwrite: true,
+      invalidate: true,
+      transformation: [
+        { quality: 60 },
+        { fetch_format: "webp" },
+      ]
+    })
+    return result.secure_url
+  }
+
+  return uploadImage(image)
 }

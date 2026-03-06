@@ -26,7 +26,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => (
             </p>
             <AddToPlanButton recipe={recipe} />
           </div>
-          <RecipeCreator creatorName={recipe.creator_name} />
+          <RecipeCreator creatorName={recipe.creator_name} userId={recipe.recipe_user_id} />
         </div>
       </div>
     </div>

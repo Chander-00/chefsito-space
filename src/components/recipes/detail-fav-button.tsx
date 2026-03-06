@@ -5,41 +5,38 @@ import { toggleFavoriteAction } from "@/actions/favorites";
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 
-interface FavButtonProps {
+interface DetailFavButtonProps {
   recipeId: string;
   initialFavorited: boolean;
-  isSignedIn: boolean;
 }
 
-export function FavButton({ recipeId, initialFavorited, isSignedIn }: FavButtonProps) {
+export function DetailFavButton({ recipeId, initialFavorited }: DetailFavButtonProps) {
   const [isPending, startTransition] = useTransition();
   const [optimisticFavorited, setOptimisticFavorited] = useOptimistic(initialFavorited);
 
-  const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (!isSignedIn) return;
-
+  const handleToggle = () => {
     startTransition(async () => {
       setOptimisticFavorited(!optimisticFavorited);
       await toggleFavoriteAction(recipeId);
     });
   };
 
-  if (!isSignedIn) return null;
-
   return (
     <button
       onClick={handleToggle}
       disabled={isPending}
-      className="absolute right-4 top-4 z-30 rounded-full bg-black/40 p-2 opacity-0 transition-all hover:bg-black/60 group-hover:opacity-100"
+      className={`flex items-center gap-2 rounded border px-3 py-1 text-sm transition-colors ${
+        optimisticFavorited
+          ? "border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+          : "border-gray-500 text-gray-400 hover:bg-gray-700 hover:text-white"
+      }`}
     >
       {optimisticFavorited ? (
-        <HeartSolid className="h-5 w-5 text-red-500" />
+        <HeartSolid className="h-4 w-4" />
       ) : (
-        <HeartOutline className="h-5 w-5 text-white" />
+        <HeartOutline className="h-4 w-4" />
       )}
+      {optimisticFavorited ? "Favorited" : "Favorite"}
     </button>
   );
 }

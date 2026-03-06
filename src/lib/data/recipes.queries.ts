@@ -127,6 +127,60 @@ export async function getRandomRecipeSlugFromDB(): Promise<string | null> {
   return recipe?.slug ?? null
 }
 
+// ─── Admin queries ──────────────────────────────────────────
+
+export async function getAdminStats() {
+  const [totalRecipes, totalUsers, totalFavorites] = await Promise.all([
+    prisma.recipe.count({ where: { deletedAt: null } }),
+    prisma.user.count(),
+    prisma.favorite.count(),
+  ])
+  return { totalRecipes, totalUsers, totalFavorites }
+}
+
+export async function getMostFavoritedRecipes(limit = 5) {
+  const recipes = await prisma.recipe.findMany({
+    where: { deletedAt: null },
+    include: {
+      _count: { select: { favorites: true } },
+      country: true,
+      user: { select: { name: true } },
+    },
+    orderBy: { favorites: { _count: 'desc' } },
+    take: limit,
+  })
+  return recipes.map((r) => ({
+    id: r.id,
+    title: r.title,
+    slug: r.slug,
+    image: r.image,
+    creator: r.user.name ?? 'Unknown',
+    country: r.country.name,
+    favoriteCount: r._count.favorites,
+  }))
+}
+
+export async function getRecentRecipes(limit = 10) {
+  const recipes = await prisma.recipe.findMany({
+    where: { deletedAt: null },
+    include: {
+      country: true,
+      user: { select: { name: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+  })
+  return recipes.map((r) => ({
+    id: r.id,
+    title: r.title,
+    slug: r.slug,
+    image: r.image,
+    creator: r.user.name ?? 'Unknown',
+    country: r.country.name,
+    createdAt: r.createdAt,
+  }))
+}
+
 // ─── Write queries ──────────────────────────────────────────
 
 export const createRecipe = async (preRecipe: RecipeInput) => {

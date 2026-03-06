@@ -3,7 +3,7 @@
 import { auth } from '@/auth'
 import { softDeleteRecipe, restoreRecipe, updateRecipe } from '@/lib/data/recipes.queries'
 import { updateUserRole } from '@/lib/data/user.queries'
-import { uploadImage } from '@/lib/cloudinary'
+import { replaceImage } from '@/lib/cloudinary'
 import { RecipeIngredient, RecipeInstruction } from '@/types/recipes'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -39,10 +39,11 @@ export async function updateRecipeAction(
   const ingredients = JSON.parse(formData.get('ingredients') as string) as RecipeIngredient[]
   const instructions = JSON.parse(formData.get('instructions') as string) as RecipeInstruction[]
   const imageFile = formData.get('image') as File | null
+  const existingImageUrl = formData.get('existingImageUrl') as string | null
 
   let imageUrl: string | undefined
-  if (imageFile && imageFile.size > 0) {
-    imageUrl = await uploadImage(imageFile)
+  if (imageFile && imageFile.size > 0 && existingImageUrl) {
+    imageUrl = await replaceImage(imageFile, existingImageUrl)
   }
 
   await updateRecipe(recipeId, {

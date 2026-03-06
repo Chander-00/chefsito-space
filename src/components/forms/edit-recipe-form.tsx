@@ -99,6 +99,7 @@ export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
       formData.append("instructions", JSON.stringify(instructions));
       if (imageInput && imageInput.files && imageInput.files[0]) {
         formData.append("image", imageInput.files[0]);
+        formData.append("existingImageUrl", recipe.recipe_image);
       }
     }
 

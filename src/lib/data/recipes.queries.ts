@@ -181,6 +181,44 @@ export async function getRecentRecipes(limit = 10) {
   }))
 }
 
+export async function getAdminRecipes(query?: string, includeDeleted = false) {
+  const recipes = await prisma.recipe.findMany({
+    where: {
+      ...(!includeDeleted ? { deletedAt: null } : {}),
+      ...(query ? { title: { contains: query, mode: 'insensitive' as const } } : {}),
+    },
+    include: {
+      country: true,
+      user: { select: { name: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+  return recipes.map((r) => ({
+    id: r.id,
+    title: r.title,
+    slug: r.slug,
+    image: r.image,
+    creator: r.user.name ?? 'Unknown',
+    country: r.country.name,
+    createdAt: r.createdAt,
+    deletedAt: r.deletedAt,
+  }))
+}
+
+export async function softDeleteRecipe(id: string) {
+  await prisma.recipe.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  })
+}
+
+export async function restoreRecipe(id: string) {
+  await prisma.recipe.update({
+    where: { id },
+    data: { deletedAt: null },
+  })
+}
+
 // ─── Write queries ──────────────────────────────────────────
 
 export const createRecipe = async (preRecipe: RecipeInput) => {

@@ -52,6 +52,50 @@ export const updateUserPassword = async (id: string, password: string ) => {
   })
 }
 
+export async function getUserProfile(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      createdAt: true,
+      _count: { select: { Recipe: true, Favorite: true } },
+    },
+  })
+  return user
+}
+
+export async function getUserRecipes(userId: string, page = 1, perPage = 25) {
+  const where = { userId, deletedAt: null as null }
+
+  const [recipes, total] = await Promise.all([
+    prisma.recipe.findMany({
+      where,
+      include: {
+        country: true,
+        user: { select: { name: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.recipe.count({ where }),
+  ])
+
+  return {
+    recipes: recipes.map((r) => ({
+      recipe_id: r.id,
+      recipe_name: r.title,
+      recipe_slug: r.slug,
+      recipe_country: r.country.name,
+      recipe_image: r.image,
+      creator_name: r.user.name ?? 'Unknown',
+    })),
+    total,
+  }
+}
+
 export async function getAllUsers(page = 1, perPage = 25) {
   const [users, total] = await Promise.all([
     prisma.user.findMany({

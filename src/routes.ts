@@ -6,7 +6,8 @@
 export const publicRoutes = [
   '/',
   '/recipes/details/*',
-  '/recipes/search'
+  '/recipes/search',
+  '/users/*',
 ]
 
 

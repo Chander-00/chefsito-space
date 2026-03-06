@@ -5,7 +5,7 @@ import GithubIcon from "./icons/twitter";
 
 export default function OauthButtons() {
   return (
-    <div className="mt-6 flex justify-center space-x-6">
+    <div className="mt-6 flex justify-start space-x-6">
       <SocialButton providerName="google" icon={<GoogleIcon />} />
 
       <SocialButton providerName="github" icon={<GithubIcon />} />

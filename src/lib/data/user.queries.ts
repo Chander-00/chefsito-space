@@ -51,3 +51,17 @@ export const updateUserPassword = async (id: string, password: string ) => {
     data: { password }
   })
 }
+
+export async function getAllUsers() {
+  return prisma.user.findMany({
+    include: {
+      accounts: { select: { provider: true } },
+      _count: { select: { Recipe: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+}
+
+export async function updateUserRole(id: string, role: 'ADMIN' | 'USER') {
+  await prisma.user.update({ where: { id }, data: { role } })
+}

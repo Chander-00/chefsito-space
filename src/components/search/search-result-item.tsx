@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import type { SearchResult } from '@/lib/data/fetch-recipes'
+import type { SearchResult } from '@/actions/search-recipes'
 import { AddToPlanCardButton } from '@/components/meal-plan/add-to-plan-card-button'
 
 export function SearchResultItem({ recipe }: { recipe: SearchResult }) {

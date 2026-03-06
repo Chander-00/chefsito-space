@@ -1,20 +1,18 @@
 'use server';
 
 import { redirect } from "next/navigation";
-import {
-  createRecipe,
-  getCountries as _getCountries,
-  getIngredients as _getIngredients,
-} from "@/lib/data/recipes.queries";
+import { createRecipe, searchIngredientsFromDB } from "@/lib/data/recipes.queries";
+import { prisma } from "@/lib/prisma";
 import { RecipeIngredient, RecipeInput, RecipeInstruction } from "@/types/recipes";
 import { CreateRecipeSchema } from "@/validations/recipe.schema";
 
-export async function getCountries() {
-  return _getCountries();
-}
+export const getCountries = async () => {
+  return await prisma.country.findMany();
+};
 
 export async function getIngredients(searchTerm: string) {
-  return _getIngredients(searchTerm);
+  if (!searchTerm) return [];
+  return searchIngredientsFromDB(searchTerm)
 }
 
 export async function createRecipeAction(prevState: any, formData: FormData) {
@@ -24,7 +22,7 @@ export async function createRecipeAction(prevState: any, formData: FormData) {
   const imageInput = formData.get("image") as File | null;
   let ingredients = JSON.parse(formData.get("ingredients") as string) as RecipeIngredient[];
   let instructions = JSON.parse(formData.get("instructions") as string) as RecipeInstruction[];
-  
+
   const preRecipe = {
     name,
     country,
@@ -33,7 +31,7 @@ export async function createRecipeAction(prevState: any, formData: FormData) {
     instructions,
     imageInput
   }
-  
+
   const validatedFields = CreateRecipeSchema.safeParse(preRecipe)
 
   if (!validatedFields.success) {

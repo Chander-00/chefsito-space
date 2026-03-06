@@ -1,6 +1,5 @@
 "use client";
-import { useFormState } from "react-dom";
-import { useRef, useState } from "react";
+import { startTransition, useActionState, useRef, useState } from "react";
 
 import { RecipeInstruction, RecipeIngredient } from "@/types/recipes";
 import { createRecipeAction } from "@/actions/recipes";
@@ -16,7 +15,10 @@ import ImagePicker from "../recipes/image-picker";
 
 export default function NewRecipeForm() {
   const formRef = useRef<HTMLFormElement>(null);
-  const [formState, formAction] = useFormState(createRecipeAction, {});
+  const [formState, formAction, isPending] = useActionState(createRecipeAction, {
+    errors: {},
+    message: "",
+  });
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
   const [instructions, setInstructions] = useState<RecipeInstruction[]>([]);
 
@@ -50,8 +52,26 @@ export default function NewRecipeForm() {
     });
   };
 
+  const handleReorderInstructions = (fromIndex: number, toIndex: number) => {
+    setInstructions((prev) => {
+      const updated = [...prev];
+      const [moved] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, moved);
+      return updated.map((inst, i) => ({ ...inst, step_number: i + 1 }));
+    });
+  };
+
+  const handleEditInstruction = (index: number, newText: string) => {
+    setInstructions((prev) =>
+      prev.map((inst, i) =>
+        i === index ? { ...inst, instruction: newText } : inst
+      )
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isPending) return;
 
     const formData = new FormData();
 
@@ -79,7 +99,7 @@ export default function NewRecipeForm() {
       }
     }
 
-    formAction(formData);
+    startTransition(() => formAction(formData));
   };
 
   return (
@@ -130,6 +150,8 @@ export default function NewRecipeForm() {
       <DisplayInstructions
         instructions={instructions}
         handleRemoveInstruction={handleRemoveInstruction}
+        handleReorderInstructions={handleReorderInstructions}
+        handleEditInstruction={handleEditInstruction}
       />
       <div className="grid grid-cols-1">
         <ImagePicker
@@ -138,7 +160,7 @@ export default function NewRecipeForm() {
           errors={formState.errors?.imageInput}
         />
       </div>
-      <FormSubmitButton text="Create Recipe" loadingText="Creating Recipe..." />
+      <FormSubmitButton text="Create Recipe" loadingText="Creating Recipe..." disabled={isPending} />
     </form>
   );
 }

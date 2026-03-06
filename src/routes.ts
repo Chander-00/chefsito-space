@@ -5,22 +5,24 @@
  */
 export const publicRoutes = [
   '/',
-  '/auth/new-verification',
-  '/recipes/details/*'
+  '/recipes/details/*',
+  '/recipes/search'
 ]
 
 
 /**
  * An array of routes that are used for authentication
- * These routes will redirect users to somewhere 
+ * These routes will redirect users to somewhere
  * @type {string[]}
  */
 export const authRoutes = [
-  "/auth/signup",
   "/auth/signin",
   "/auth/error",
-  "/auth/reset",
-  "/auth/new-password"
+  // --- Credential-based auth routes (commented out for OAuth-only) ---
+  // "/auth/signup",
+  // "/auth/reset",
+  // "/auth/new-password",
+  // "/auth/new-verification",
 ]
 
 

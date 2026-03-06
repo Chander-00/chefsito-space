@@ -1,7 +1,7 @@
 'use server';
 
-import { uploadImage } from "@/lib/cloudinary";
-import { createRecipe } from "@/lib/data/recipes.queries";
+import { redirect } from "next/navigation";
+import { createRecipe, searchIngredientsFromDB } from "@/lib/data/recipes.queries";
 import { prisma } from "@/lib/prisma";
 import { RecipeIngredient, RecipeInput, RecipeInstruction } from "@/types/recipes";
 import { CreateRecipeSchema } from "@/validations/recipe.schema";
@@ -10,37 +10,9 @@ export const getCountries = async () => {
   return await prisma.country.findMany();
 };
 
-
-// Mock data for demonstration
-const mockIngredients = ["banana", "beans", "apple", "orange", "carrot", "potato", "algo", "algo mas"];
-
 export async function getIngredients(searchTerm: string) {
   if (!searchTerm) return [];
-  
-  // Convert the search term to lower case for a case-insensitive comparison
-  const lowerCaseSearchTerm = searchTerm.toLowerCase();
-  
-  // Filter the mock data based on the search term
-  const matchingIngredients = mockIngredients.filter(ingredient => 
-    ingredient.toLowerCase().includes(lowerCaseSearchTerm)
-  );
-
-  return matchingIngredients;
-
-  // const ingredients = await prisma.ingredient.findMany({
-//   where: {
-//     name: {
-//       contains: searchTerm,
-//       mode: 'insensitive', // Búsqueda sin mayúsculas/minúsculas
-//     },
-//   },
-//   select: {
-//     name: true,
-//   },
-// });
-
-// return ingredients.map(ingredient => ingredient.name);
-
+  return searchIngredientsFromDB(searchTerm)
 }
 
 export async function createRecipeAction(prevState: any, formData: FormData) {
@@ -50,7 +22,7 @@ export async function createRecipeAction(prevState: any, formData: FormData) {
   const imageInput = formData.get("image") as File | null;
   let ingredients = JSON.parse(formData.get("ingredients") as string) as RecipeIngredient[];
   let instructions = JSON.parse(formData.get("instructions") as string) as RecipeInstruction[];
-  
+
   const preRecipe = {
     name,
     country,
@@ -59,10 +31,8 @@ export async function createRecipeAction(prevState: any, formData: FormData) {
     instructions,
     imageInput
   }
-  
+
   const validatedFields = CreateRecipeSchema.safeParse(preRecipe)
-  // console.log(validatedFields.data?.imageInput)
-  // await uploadImage(validatedFields.data?.imageInput as unknown as File)
 
   if (!validatedFields.success) {
     return {
@@ -71,7 +41,7 @@ export async function createRecipeAction(prevState: any, formData: FormData) {
     };
   }
   const { data } = validatedFields
-  await createRecipe(data as RecipeInput)
+  const slug = await createRecipe(data as RecipeInput)
 
-  return {};
+  redirect(`/recipes/details/${slug}`)
 }

@@ -24,7 +24,7 @@ export default function DisplayIngredientes({
               className="flex items-center justify-between bg-slate-500 p-2 rounded mb-1"
             >
               <span className="text-trinidad-100">
-                {ingredient.quantity} {ingredient.unit} of {ingredient.name}
+                {ingredient.quantity} {ingredient.unit} of {ingredient.name} — importance: {ingredient.weight}/10
               </span>
               <button
                 type="button"

@@ -2,6 +2,7 @@ import { RecipePreview } from "@/types/recipes";
 import Image from "next/image";
 import Link from "next/link";
 import { FavButton } from "./add-to-fav-button";
+import { AddToPlanCardButton } from "@/components/meal-plan/add-to-plan-card-button";
 
 export function RecipeItem({ recipe }: { recipe: RecipePreview }) {
   return (
@@ -27,6 +28,7 @@ export function RecipeItem({ recipe }: { recipe: RecipePreview }) {
           </div>
 
           <FavButton />
+          <AddToPlanCardButton recipeId={recipe.recipe_id} />
         </div>
       </Link>
     </li>

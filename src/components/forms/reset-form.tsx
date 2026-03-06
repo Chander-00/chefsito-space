@@ -1,5 +1,5 @@
 "use client";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 
 import TextInput from "../form-components/text-input";
 import FormSubmitButton from "../btns/form-submit";
@@ -14,7 +14,7 @@ const initialState: ResetFormState = {
 };
 
 export default function ResetForm() {
-  const [state, formAction] = useFormState(resetAction, initialState);
+  const [state, formAction] = useActionState(resetAction, initialState);
 
   return (
     <form action={formAction} className="flex flex-col gap-6">

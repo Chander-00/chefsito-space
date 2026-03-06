@@ -1,9 +1,22 @@
 import { auth } from '@/auth'
 import { getAllUsers } from '@/lib/data/user.queries'
 import { AdminUserList } from '@/components/admin/admin-user-list'
+import { Pagination } from '@/components/pagination'
 
-export default async function AdminUsersPage() {
-  const [users, session] = await Promise.all([getAllUsers(), auth()])
+const PER_PAGE = 25
+
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const resolvedParams = await searchParams
+  const currentPage = Number(resolvedParams?.page) || 1
+  const [{ users, total }, session] = await Promise.all([
+    getAllUsers(currentPage, PER_PAGE),
+    auth(),
+  ])
+  const totalPages = Math.ceil(total / PER_PAGE)
 
   const serializedUsers = users.map((user) => ({
     id: user.id,
@@ -19,6 +32,7 @@ export default async function AdminUsersPage() {
     <div>
       <h1 className="text-2xl font-bold text-white mb-6">User Management</h1>
       <AdminUserList users={serializedUsers} currentUserId={session!.user.id!} />
+      <Pagination totalPages={totalPages} currentPage={currentPage} />
     </div>
   )
 }

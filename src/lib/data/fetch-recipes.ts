@@ -1,10 +1,14 @@
 "use server";
 
 import { RecipePreview } from "@/types/recipes";
-import { getRecipesPreviewFromDB, getRecipeBySlugFromDB, getRandomRecipeSlugFromDB } from "./recipes.queries";
+import { getRecipesPreviewFromDB, getRecipeBySlugFromDB, getRandomRecipeSlugFromDB, getUserFavoriteIds } from "./recipes.queries";
 
-export async function getRecipesPreview(query?: string, currentPage?: number): Promise<RecipePreview[]> {
-  return getRecipesPreviewFromDB(query)
+export async function getRecipesPreview(
+  query?: string,
+  page = 1,
+  perPage = 25
+): Promise<{ recipes: RecipePreview[]; total: number }> {
+  return getRecipesPreviewFromDB(query, page, perPage)
 }
 
 export async function getRecipeBySlug(slug: string) {
@@ -13,4 +17,9 @@ export async function getRecipeBySlug(slug: string) {
 
 export async function getRandomRecipeSlug(): Promise<string | null> {
   return getRandomRecipeSlugFromDB()
+}
+
+export async function getFavoriteIds(userId: string): Promise<string[]> {
+  const set = await getUserFavoriteIds(userId)
+  return Array.from(set)
 }

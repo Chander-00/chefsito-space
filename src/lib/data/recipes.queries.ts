@@ -51,27 +51,41 @@ const recipeInclude = {
   },
 } as const
 
-export async function getRecipesPreviewFromDB(query?: string): Promise<RecipePreview[]> {
-  const recipes = await prisma.recipe.findMany({
-    where: {
-      deletedAt: null,
-      ...(query ? { title: { contains: query, mode: 'insensitive' } } : {}),
-    },
-    include: {
-      country: true,
-      user: { select: { name: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  })
+export async function getRecipesPreviewFromDB(
+  query?: string,
+  page = 1,
+  perPage = 25
+): Promise<{ recipes: RecipePreview[]; total: number }> {
+  const where = {
+    deletedAt: null as null,
+    ...(query ? { title: { contains: query, mode: 'insensitive' as const } } : {}),
+  }
 
-  return recipes.map((r) => ({
-    recipe_id: r.id,
-    recipe_name: r.title,
-    recipe_slug: r.slug,
-    recipe_country: r.country.name,
-    recipe_image: r.image,
-    creator_name: r.user.name ?? 'Unknown',
-  }))
+  const [recipes, total] = await Promise.all([
+    prisma.recipe.findMany({
+      where,
+      include: {
+        country: true,
+        user: { select: { name: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.recipe.count({ where }),
+  ])
+
+  return {
+    recipes: recipes.map((r) => ({
+      recipe_id: r.id,
+      recipe_name: r.title,
+      recipe_slug: r.slug,
+      recipe_country: r.country.name,
+      recipe_image: r.image,
+      creator_name: r.user.name ?? 'Unknown',
+    })),
+    total,
+  }
 }
 
 export async function getRecipeBySlugFromDB(slug: string): Promise<Recipe | undefined> {
@@ -175,28 +189,44 @@ export async function getRecentRecipes(limit = 10) {
   }))
 }
 
-export async function getAdminRecipes(query?: string, includeDeleted = false) {
-  const recipes = await prisma.recipe.findMany({
-    where: {
-      ...(!includeDeleted ? { deletedAt: null } : {}),
-      ...(query ? { title: { contains: query, mode: 'insensitive' as const } } : {}),
-    },
-    include: {
-      country: true,
-      user: { select: { name: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  })
-  return recipes.map((r) => ({
-    id: r.id,
-    title: r.title,
-    slug: r.slug,
-    image: r.image,
-    creator: r.user.name ?? 'Unknown',
-    country: r.country.name,
-    createdAt: r.createdAt,
-    deletedAt: r.deletedAt,
-  }))
+export async function getAdminRecipes(
+  query?: string,
+  includeDeleted = false,
+  page = 1,
+  perPage = 25
+) {
+  const where = {
+    ...(!includeDeleted ? { deletedAt: null as null } : {}),
+    ...(query ? { title: { contains: query, mode: 'insensitive' as const } } : {}),
+  }
+
+  const [recipes, total] = await Promise.all([
+    prisma.recipe.findMany({
+      where,
+      include: {
+        country: true,
+        user: { select: { name: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.recipe.count({ where }),
+  ])
+
+  return {
+    recipes: recipes.map((r) => ({
+      id: r.id,
+      title: r.title,
+      slug: r.slug,
+      image: r.image,
+      creator: r.user.name ?? 'Unknown',
+      country: r.country.name,
+      createdAt: r.createdAt,
+      deletedAt: r.deletedAt,
+    })),
+    total,
+  }
 }
 
 export async function softDeleteRecipe(id: string) {
@@ -274,6 +304,72 @@ export async function updateRecipe(
       })
     )
   })
+}
+
+export async function toggleFavorite(userId: string, recipeId: string): Promise<boolean> {
+  const existing = await prisma.favorite.findUnique({
+    where: { userId_recipeId: { userId, recipeId } },
+  })
+
+  if (existing) {
+    await prisma.favorite.delete({ where: { id: existing.id } })
+    return false
+  }
+
+  await prisma.favorite.create({ data: { userId, recipeId } })
+  return true
+}
+
+export async function getUserFavoriteIds(userId: string): Promise<Set<string>> {
+  const favorites = await prisma.favorite.findMany({
+    where: { userId },
+    select: { recipeId: true },
+  })
+  return new Set(favorites.map((f) => f.recipeId))
+}
+
+export async function isRecipeFavorited(userId: string, recipeId: string): Promise<boolean> {
+  const fav = await prisma.favorite.findUnique({
+    where: { userId_recipeId: { userId, recipeId } },
+    select: { id: true },
+  })
+  return !!fav
+}
+
+export async function getUserFavoriteRecipes(
+  userId: string,
+  page = 1,
+  perPage = 25
+): Promise<{ recipes: RecipePreview[]; total: number }> {
+  const [favorites, total] = await Promise.all([
+    prisma.favorite.findMany({
+      where: { userId, recipe: { deletedAt: null } },
+      include: {
+        recipe: {
+          include: {
+            country: true,
+            user: { select: { name: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.favorite.count({ where: { userId, recipe: { deletedAt: null } } }),
+  ])
+
+  return {
+    recipes: favorites.map((f) => ({
+      recipe_id: f.recipe.id,
+      recipe_name: f.recipe.title,
+      recipe_slug: f.recipe.slug,
+      recipe_country: f.recipe.country.name,
+      recipe_image: f.recipe.image,
+      creator_name: f.recipe.user.name ?? 'Unknown',
+    })),
+    total,
+  }
 }
 
 export const createRecipe = async (preRecipe: RecipeInput) => {

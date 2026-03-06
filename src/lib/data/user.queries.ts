@@ -52,14 +52,20 @@ export const updateUserPassword = async (id: string, password: string ) => {
   })
 }
 
-export async function getAllUsers() {
-  return prisma.user.findMany({
-    include: {
-      accounts: { select: { provider: true } },
-      _count: { select: { Recipe: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  })
+export async function getAllUsers(page = 1, perPage = 25) {
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      include: {
+        accounts: { select: { provider: true } },
+        _count: { select: { Recipe: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.user.count(),
+  ])
+  return { users, total }
 }
 
 export async function updateUserRole(id: string, role: 'ADMIN' | 'USER') {
